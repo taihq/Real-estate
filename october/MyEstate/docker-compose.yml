@@ -1,0 +1,35 @@
+version: "2.2"
+services:
+    web:
+        image: aspendigital/octobercms
+        ports:
+            - 80:80
+
+    db:
+        image: mysql:5.7
+        container_name: "estate-mysql"
+        ports:
+            - 3306:3306
+        command: mysqld --character-set-server=utf8 --collation-server=utf8_general_ci --init-connect='SET NAMES UTF8;' --innodb-flush-log-at-trx-commit=0
+        environment:
+            MYSQL_ROOT_PASSWORD: password
+            MYSQL_DATABASE: estate_db
+            MYSQL_USER: root
+            MYSQL_PASSWORD: password
+        volumes:
+            - .././estate-db-data:/var/lib/mysql
+
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        container_name: "estate-phpmyadmin"
+        ports:
+            - 8084:80
+        depends_on:
+            - db
+        environment:
+            PMA_HOST: db
+        restart: always
+
+volumes:
+    laravel-db-data:
+        driver: local
